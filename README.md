@@ -30,7 +30,8 @@ curl -L -X GET "http://localhost:8080/wash/machine/" -H "Content-Type: applicati
 
 
 If we know machine id we can create action(washing) on them. Actions also have events(steps).
-...
+
+
 Machine : 
 - Action 1
     - Start
@@ -40,9 +41,9 @@ Machine :
 - Action 2
     - Start 
     - Wash
-    ...
+    - ...
     - Complete
-...
+
 
 Action have there [WashStep](src/main/java/com/example/washmachine/common/WashStep.java) 
 and can be in different [WashActionStatus](src/main/java/com/example/washmachine/common/WashActionStatus.java)
@@ -57,10 +58,10 @@ or with them:
 curl -L -X POST "http://localhost:8080/wash/action/" -H "Content-Type: application/json" --data-raw "{ \"machineId\":\"{machineId}\", \"washMode\":\"DAILY\", \"status\":\"PROCESS\", \"customParams\":{ \"spinPower\":800, \"rinsesCount\":4, \"temperature\":45, \"powder\":\"My special powder\", \"conditioner\":\"My special conditioner\" } }"
 
 To check current action by {actionID}:
-curl -L -X GET "http://localhost:8080/wash/action/48506427-aa71-42f7-82c9-5afd875d3edb" 
+curl -L -X GET "http://localhost:8080/wash/action/{actionID}" 
 
 Or you can get action by {machineId}:
-curl -L -X GET "http://localhost:8080/wash/action/machine/b1426d4d-163b-49d3-b490-f7d7d2567038"
+curl -L -X GET "http://localhost:8080/wash/action/machine/{machineId}"
 
 
 After creating action machine can show their status by sending events.

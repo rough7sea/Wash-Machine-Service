@@ -41,7 +41,7 @@ Machine :
 - Action 2
     - Start 
     - Wash
-    - ...
+    ...
     - Complete
 
 

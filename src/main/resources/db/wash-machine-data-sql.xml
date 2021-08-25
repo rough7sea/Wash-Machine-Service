@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="getAllWashMachineSQLQuery">
+        <![CDATA[
+            select * from wash_machine
+        ]]>
+    </entry>
+    <entry key="getWashMachineSQLQuery">
+        <![CDATA[
+            select * from wash_machine where id = ?::uuid
+        ]]>
+    </entry>
+    <entry key="deleteWashMachineSQLQuery">
+        <![CDATA[
+            delete from wash_machine where wash_machine.id = :m_id::uuid;
+        ]]>
+    </entry>
+    <entry key="insertWashMachineSQLQuery">
+        <![CDATA[
+            INSERT INTO wash_machine(id, name, status, create_date)
+		            VALUES (:w_id::uuid,:w_name, :w_status::machine_status, now())
+		            returning *;
+        ]]>
+    </entry>
+    <entry key="updateWashMachineSQLQuery">
+        <![CDATA[
+            UPDATE wash_machine SET
+                name = :w_name,
+                status = :w_status::machine_status,
+                update_date = now()
+                WHERE id = :w_id::uuid
+               	returning *;
+
+        ]]>
+    </entry>
+</properties>

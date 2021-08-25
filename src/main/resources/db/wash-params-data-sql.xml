@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="insertParamsSQLQuery">
+        <![CDATA[
+            insert into wash_params (action_id, spin_power, rinses_count, temperature, powder, conditioner)
+                            values (:action_id::uuid, :spin_power, :rinses_count, :temperature, :powder, :conditioner)
+                            returning *;
+        ]]>
+    </entry>
+    <entry key="getParamsBiActionIdSQLQuery">
+        <![CDATA[
+            select * from wash_params where wash_params.action_id = :a_id::uuid;
+        ]]>
+    </entry>
+</properties>

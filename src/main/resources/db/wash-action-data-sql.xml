@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="getAllActionSQLQuery">
+        <![CDATA[
+            select * from wash_action
+        ]]>
+    </entry>
+    <entry key="getAllActionByIdSQLQuery">
+        <![CDATA[
+            select * from wash_action where action_id = ?::uuid
+        ]]>
+    </entry>
+    <entry key="getAllActionByMachineIdSQLQuery">
+        <![CDATA[
+            select * from wash_action where machine_id = ?::uuid
+        ]]>
+    </entry>
+    <entry key="insertActionSQLQuery">
+        <![CDATA[
+            INSERT INTO wash_action(action_id, machine_id, start_date, wash_mode, status)
+		            VALUES (:a_id::uuid,:m_id::uuid, now(), :a_mode, :a_status::wash_action_status)
+		            returning *;
+        ]]>
+    </entry>
+    <entry key="updateActionSQLQuery">
+        <![CDATA[
+            UPDATE wash_action SET
+                status = :a_status::wash_action_status,
+                wash_mode = :a_mode,
+                update_date = now()
+                WHERE action_id = :a_id::uuid and machine_id = :m_id::uuid
+               	returning *;
+        ]]>
+    </entry>
+    <entry key="updateWashActionStatusSQLQuery">
+        <![CDATA[
+            update wash_action set
+                    status = :w_status::wash_status,
+                    update_date = now()
+                 where action_id = :a_id::uuid;
+                 returning *;
+        ]]>
+    </entry>
+</properties>

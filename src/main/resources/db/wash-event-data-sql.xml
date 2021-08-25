@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="insertWashEventSQLQuery">
+        <![CDATA[
+            insert into wash_event (action_id, step, start_date) values (:action_id::uuid, :step::wash_step, now())
+            returning *;
+        ]]>
+    </entry>
+    <entry key="getWashEventsByActionIdSQLQuery">
+        <![CDATA[
+            select * from wash_event where action_id = ?::uuid
+            order by start_date desc
+        ]]>
+    </entry>
+    <entry key="getCurrentActionEventsSQLQuery">
+        <![CDATA[
+            select * from wash_event where action_id = ?::uuid
+            order by start_date desc
+            limit 1;
+        ]]>
+    </entry>
+</properties>

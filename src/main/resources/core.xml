@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                           http://www.springframework.org/schema/util
+                           http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+
+    <util:properties id="wash-machine-data-sql" location="classpath:/db/wash-machine-data-sql.xml"/>
+    <util:properties id="wash-action-data-sql" location="classpath:/db/wash-action-data-sql.xml"/>
+    <util:properties id="wash-event-data-sql" location="classpath:/db/wash-event-data-sql.xml"/>
+    <util:properties id="wash-params-data-sql" location="classpath:/db/wash-params-data-sql.xml"/>
+
+
+    <bean id="getWashMachineListener"
+          class="com.example.washmachine.listener.WashMachineListener">
+        <property name="beforeExecutors">
+            <list>
+<!--                <ref bean=""/>-->
+            </list>
+        </property>
+
+        <property name="afterExecutors">
+            <list>
+                <ref bean="washMachineDescriptionEnrichAfterExecutor"/>
+                <ref bean="washMachineAccessoriesEnrichAfterExecutor"/>
+            </list>
+        </property>
+    </bean>
+
+
+    <bean id="washMachineAccessoriesEnrichAfterExecutor"
+          class="com.example.washmachine.executor.after.impl.WashMachineAccessoriesEnrichAfterExecutor"/>
+    <bean id="washMachineDescriptionEnrichAfterExecutor"
+          class="com.example.washmachine.executor.after.impl.WashMachineDescriptionEnrichAfterExecutor"/>
+
+</beans>

@@ -74,3 +74,11 @@ curl -L -X GET "http://localhost:8080/wash/event/current/{actionId}"
 
 Or User can check all events in action with {actionId}:
 curl -L -X GET "http://localhost:8080/wash/event/action/{actionId}"
+
+
+
+
+To refactor:
+ - add memmory DB for testing
+ - Resolve autowiried injections
+ - Remove unnecessary interfases and docs

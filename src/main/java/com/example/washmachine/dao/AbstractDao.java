@@ -1,4 +1,4 @@
-package com.example.washmachine.dao.impl;
+package com.example.washmachine.dao;
 
 import javax.sql.DataSource;
 

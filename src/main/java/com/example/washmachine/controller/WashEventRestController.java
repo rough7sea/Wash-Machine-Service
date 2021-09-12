@@ -5,7 +5,6 @@ import java.util.List;
 import com.example.washmachine.api.dto.WashEventDto;
 import com.example.washmachine.entity.WashEvent;
 import com.example.washmachine.service.WashEventService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,8 +18,11 @@ import static com.example.washmachine.controller.Paths.WASH_EVENT_BASE_PATH;
 @RequestMapping(WASH_EVENT_BASE_PATH)
 public class WashEventRestController {
 
-    @Autowired
-    private WashEventService washEventService;
+    private final WashEventService washEventService;
+
+    public WashEventRestController(WashEventService washEventService) {
+        this.washEventService = washEventService;
+    }
 
     /**
      * Add new wash event to action.

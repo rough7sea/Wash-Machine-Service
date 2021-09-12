@@ -5,7 +5,6 @@ import java.util.List;
 import com.example.washmachine.api.dto.WashMachineDto;
 import com.example.washmachine.entity.WashMachine;
 import com.example.washmachine.service.WashMachineService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,8 +19,11 @@ import static com.example.washmachine.controller.Paths.WASH_MACHINE_BASE_PATH;
 @RequestMapping(WASH_MACHINE_BASE_PATH)
 public class WashMachineRestController {
 
-    @Autowired
-    private WashMachineService washMachineService;
+    private final WashMachineService washMachineService;
+
+    public WashMachineRestController(WashMachineService washMachineService) {
+        this.washMachineService = washMachineService;
+    }
 
     /**
      * Receive all machines.

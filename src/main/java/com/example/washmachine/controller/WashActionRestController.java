@@ -5,7 +5,6 @@ import java.util.List;
 import com.example.washmachine.entity.WashAction;
 import com.example.washmachine.api.dto.WashActionDto;
 import com.example.washmachine.service.WashActionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,8 +18,11 @@ import static com.example.washmachine.controller.Paths.WASH_ACTON_BASE_PATH;
 @RequestMapping(WASH_ACTON_BASE_PATH)
 public class WashActionRestController {
 
-    @Autowired
-    private WashActionService actionService;
+    private final WashActionService actionService;
+
+    public WashActionRestController(WashActionService actionService) {
+        this.actionService = actionService;
+    }
 
     /**
      * Receive all actions.

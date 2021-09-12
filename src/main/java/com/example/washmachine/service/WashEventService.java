@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.example.washmachine.common.WashActionStatus;
 import com.example.washmachine.common.WashStep;
-import com.example.washmachine.common.util.WashConverter;
+import com.example.washmachine.common.mappers.WashMapper;
 import com.example.washmachine.dao.WashActionDao;
 import com.example.washmachine.dao.WashEventDao;
 import com.example.washmachine.entity.WashAction;
@@ -50,7 +50,7 @@ public class WashEventService {
                     "Machine is INACTIVE. Action can't be executed");
         }
 
-        WashEvent washEventFromDto = WashConverter.convertWashEvent(dto);
+        WashEvent washEventFromDto = WashMapper.INSTANCE.toWashEvent(dto);
 
         if (action.getStatus() != WashActionStatus.PROCESS && washEventFromDto.getStep() != WashStep.COMPLETE){
             throw new ServiceException(ExceptionId.INVALID_ACTION_STATE_EX,

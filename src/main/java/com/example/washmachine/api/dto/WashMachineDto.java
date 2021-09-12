@@ -7,6 +7,4 @@ public class WashMachineDto{
     private String id;
     private String name;
     private String status;
-//    private Description description;
-//    private Accessories accessories;
 }

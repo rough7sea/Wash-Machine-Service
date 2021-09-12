@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import com.example.washmachine.api.dto.WashActionDto;
 import com.example.washmachine.common.WashActionStatus;
-import com.example.washmachine.common.util.WashConverter;
+import com.example.washmachine.common.mappers.WashMapper;
 import com.example.washmachine.dao.WashActionDao;
 import com.example.washmachine.dao.WashParamsDao;
 import com.example.washmachine.entity.WashAction;
@@ -93,7 +93,9 @@ public class WashActionService {
 
     private WashAction updateWashAction(WashActionDto dto) {
         WashAction action = ServiceUtils.executeWithCatch(
-                () -> washActionDao.updateAction(WashConverter.convertWashAction(dto)),
+                () -> washActionDao.updateAction(
+                        WashMapper.INSTANCE.toWashAction(dto)
+                ),
                 ExceptionId.INVALID_POST_BODY_REQUEST_EX,
                 "Invalid action request");
 
@@ -122,23 +124,27 @@ public class WashActionService {
             throw new ServiceException(ExceptionId.INVALID_MACHINE_STATE_EX, "Machine have ACTIVE actions");
         }
 
-
         WashAction action = ServiceUtils.executeWithCatch(
-                () -> washActionDao.insertAction(WashConverter.convertWashAction(dto)),
+                () -> washActionDao.insertAction(
+                        WashMapper.INSTANCE.toWashAction(dto)
+                ),
                 ExceptionId.INVALID_POST_BODY_REQUEST_EX,
                 "Invalid action request");
 
-        if (Objects.isNull(dto.getCustomParams())){
+        WashParams customParams = dto.getCustomParams();
+        if (Objects.isNull(customParams)){
             return action;
         }
 
+        customParams.setActionId(action.getActionId());
+
         // insert washParams
         ServiceUtils.executeWithCatch(
-                () -> washParamsDao.insertParams(dto.getCustomParams()),
+                () -> washParamsDao.insertParams(customParams),
                 ExceptionId.INVALID_POST_BODY_REQUEST_EX,
                 "Invalid action request");
 
-        action.setCustomParams(dto.getCustomParams());
+        action.setCustomParams(customParams);
         return action;
     }
 }

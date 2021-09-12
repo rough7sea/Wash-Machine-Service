@@ -7,9 +7,9 @@ import com.example.washmachine.api.dto.WashMachineDto;
 import com.example.washmachine.common.MachineStatus;
 import com.example.washmachine.common.exception.ExceptionId;
 import com.example.washmachine.common.exception.ServiceException;
+import com.example.washmachine.common.mappers.WashMapper;
 import com.example.washmachine.common.util.ServiceUtils;
 import com.example.washmachine.common.util.Validator;
-import com.example.washmachine.common.util.WashConverter;
 import com.example.washmachine.dao.WashMachineDao;
 import com.example.washmachine.entity.WashMachine;
 import com.example.washmachine.listener.WashMachineListener;
@@ -25,7 +25,8 @@ public class WashMachineService {
 
     private final WashMachineDao washMachineDao;
 
-    public WashMachineService(WashMachineListener<WashMachine> washMachineListener, WashMachineDao washMachineDao) {
+    public WashMachineService(WashMachineListener<WashMachine> washMachineListener,
+                              WashMachineDao washMachineDao) {
         this.washMachineListener = washMachineListener;
         this.washMachineDao = washMachineDao;
     }
@@ -67,7 +68,7 @@ public class WashMachineService {
 
 
     public WashMachine upsertWashMachine(WashMachineDto dto) {
-        WashMachine washMachine = WashConverter.convertWashMachine(dto);
+        WashMachine washMachine = WashMapper.INSTANCE.toWashMachine(dto);
 
         if (Objects.nonNull(dto.getId())){
             return ServiceUtils.executeWithCatch(

@@ -15,8 +15,6 @@ import lombok.NoArgsConstructor;
 public class WashMachine {
     private String id;
     private String name;
-//    private Description description;
-//    private Accessories accessories;
     private Timestamp updateDate;
     private Timestamp createDate;
     private MachineStatus status;

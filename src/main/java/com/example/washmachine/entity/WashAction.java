@@ -1,7 +1,6 @@
 package com.example.washmachine.entity;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 import com.example.washmachine.common.WashActionStatus;
 import com.example.washmachine.common.WashMode;

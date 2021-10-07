@@ -5,14 +5,13 @@ import java.util.Objects;
 
 import com.example.washmachine.api.dto.WashActionDto;
 import com.example.washmachine.common.WashActionStatus;
-import com.example.washmachine.common.mappers.WashMapper;
-import com.example.washmachine.dao.WashActionDao;
-import com.example.washmachine.dao.WashParamsDao;
-import com.example.washmachine.entity.WashAction;
-import com.example.washmachine.common.exception.ServiceException;
-import com.example.washmachine.common.util.ServiceUtils;
 import com.example.washmachine.common.exception.ExceptionId;
-import com.example.washmachine.entity.WashParams;
+import com.example.washmachine.common.exception.ServiceException;
+import com.example.washmachine.common.mappers.WashMapper;
+import com.example.washmachine.common.util.ServiceUtils;
+import com.example.washmachine.entity.WashAction;
+import com.example.washmachine.entity.WashMachine;
+import com.example.washmachine.repositories.WashActionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,129 +21,67 @@ import static com.example.washmachine.common.util.Validator.*;
 public class WashActionService {
 
 
-    private final WashActionDao washActionDao;
-    private final WashParamsDao washParamsDao;
     private final WashMachineService washMachineService;
+    private final WashActionRepository washActionRepository;
 
-    public WashActionService(WashActionDao washActionDao, WashParamsDao washParamsDao, WashMachineService washMachineService) {
-        this.washActionDao = washActionDao;
-        this.washParamsDao = washParamsDao;
+    public WashActionService(WashMachineService washMachineService, WashActionRepository washActionRepository) {
         this.washMachineService = washMachineService;
+        this.washActionRepository = washActionRepository;
     }
 
 
     public List<WashAction> list() {
-        return washActionDao.getAll();
+        return washActionRepository.findAll();
     }
 
-    public WashAction getWashAction(String actionId) {
+    public WashAction getWashAction(Long actionId) {
         validateActionId(actionId);
 
-        WashAction action = ServiceUtils.executeWithCatch(
-                () -> washActionDao.getActionById(actionId),
+        return ServiceUtils.executeWithCatch(
+                () -> washActionRepository.getById(actionId),
                 ExceptionId.INVALID_ACTION_ID_EX,
                 "No action by id [" + actionId + "]");
-
-        WashParams params = ServiceUtils.executeWithCatch(
-                () -> washParamsDao.getWashParams(actionId),
-                ExceptionId.INVALID_ACTION_ID_EX,
-                "No action by id [" + actionId + "]");
-
-        action.setCustomParams(params);
-
-        return action;
     }
 
-    public List<WashAction> getWashActionByMachineId(String machineId) {
+    public List<WashAction> getWashActionByMachineId(Long machineId) {
         validateMachineId(machineId);
 
-        List<WashAction> action = ServiceUtils.executeWithCatch(
-                () -> washActionDao.getActionsByMachineId(machineId),
+        WashMachine machine = ServiceUtils.executeWithCatch(
+                () -> washMachineService.getWashMachine(machineId),
                 ExceptionId.INVALID_MACHINE_ID_EX,
                 "Invalid machineId [" + machineId + "]");
 
-        action.forEach(
-                washAction -> {
-                    WashParams params = ServiceUtils.executeWithCatch(
-                            () -> washParamsDao.getWashParams(washAction.getActionId()),
-                            ExceptionId.INVALID_POST_BODY_REQUEST_EX,
-                            "Invalid action request");
-                    washAction.setCustomParams(params);
-                }
-        );
-
-        return action;
+        return machine.getActions();
     }
 
     @Transactional
     public WashAction upsertWashAction(WashActionDto dto) {
         validate(dto);
         // check machine status before
-        if (washMachineService.isWashMachineInactive(dto.getMachineId())){
+
+        WashMachine machine = washMachineService.getWashMachine(dto.getMachineId());
+        if (machine == null){
+            throw new ServiceException(ExceptionId.INVALID_MACHINE_ID_EX,
+                    "Invalid machineId [" + dto.getMachineId() + "]");
+        }
+        if (washMachineService.isWashMachineInactive(machine)){
             throw new ServiceException(ExceptionId.INVALID_MACHINE_STATE_EX,
                     "Machine is INACTIVE. Action can't be executed");
         }
+        WashAction action = WashMapper.INSTANCE.toWashAction(dto);
 
-        if (Objects.nonNull(dto.getActionId())){
-            return updateWashAction(dto);
-        }
-        return insertWashAction(dto);
-    }
+        if (Objects.nonNull(action.getActionId())){
+            // check in case new action
+            boolean anyMatch = machine.getActions().stream()
+                    .anyMatch(a -> !a.getStatus().equals(WashActionStatus.STOPPED) &&
+                            !a.getStatus().equals(WashActionStatus.COMPLETED));
 
-    private WashAction updateWashAction(WashActionDto dto) {
-        WashAction action = ServiceUtils.executeWithCatch(
-                () -> washActionDao.updateAction(
-                        WashMapper.INSTANCE.toWashAction(dto)
-                ),
-                ExceptionId.INVALID_POST_BODY_REQUEST_EX,
-                "Invalid action request");
-
-        action.setCustomParams(
-                ServiceUtils.executeWithCatch(
-                () -> washParamsDao.getWashParams(action.getActionId()),
-                ExceptionId.INVALID_POST_BODY_REQUEST_EX,
-                "Invalid action request")
-        );
-
-        return action;
-    }
-
-    private WashAction insertWashAction(WashActionDto dto) {
-
-        List<WashAction> machineActions = ServiceUtils.executeWithCatch(
-                () -> washActionDao.getActionsByMachineId(dto.getMachineId()),
-                ExceptionId.INVALID_POST_BODY_REQUEST_EX,
-                "Invalid action request");
-
-        boolean anyMatch = machineActions.stream()
-                .anyMatch(a -> !a.getStatus().equals(WashActionStatus.STOPPED) &&
-                        !a.getStatus().equals(WashActionStatus.COMPLETED));
-
-        if (anyMatch){
-            throw new ServiceException(ExceptionId.INVALID_MACHINE_STATE_EX, "Machine have ACTIVE actions");
+            if (anyMatch){
+                throw new ServiceException(ExceptionId.INVALID_MACHINE_STATE_EX, "Machine have ACTIVE actions");
+            }
         }
 
-        WashAction action = ServiceUtils.executeWithCatch(
-                () -> washActionDao.insertAction(
-                        WashMapper.INSTANCE.toWashAction(dto)
-                ),
-                ExceptionId.INVALID_POST_BODY_REQUEST_EX,
-                "Invalid action request");
-
-        WashParams customParams = dto.getCustomParams();
-        if (Objects.isNull(customParams)){
-            return action;
-        }
-
-        customParams.setActionId(action.getActionId());
-
-        // insert washParams
-        ServiceUtils.executeWithCatch(
-                () -> washParamsDao.insertParams(customParams),
-                ExceptionId.INVALID_POST_BODY_REQUEST_EX,
-                "Invalid action request");
-
-        action.setCustomParams(customParams);
-        return action;
+        action.setMachine(machine);
+        return washActionRepository.save(action);
     }
 }

@@ -7,8 +7,8 @@ import lombok.Data;
 @Data
 @Builder
 public class WashActionDto {
-    private String actionId;
-    private String machineId;
+    private Long actionId;
+    private Long machineId;
     private String washMode;
 
     private String status;

@@ -42,7 +42,7 @@ public class WashEventRestController {
      * @return
      */
     @GetMapping("action/{actionId}")
-    public List<WashEvent> getEventsForAction(@PathVariable String actionId){
+    public List<WashEvent> getEventsForAction(@PathVariable Long actionId){
         return washEventService.getEventsByActionId(actionId);
     }
 
@@ -53,7 +53,7 @@ public class WashEventRestController {
      * @return
      */
     @GetMapping("current/{actionId}")
-    public WashEvent currentActionEvent(@PathVariable String actionId){
+    public WashEvent currentActionEvent(@PathVariable Long actionId){
         return washEventService.currentActionEvent(actionId);
     }
 }

@@ -51,7 +51,7 @@ public class WashActionRestController {
      * @return
      */
     @GetMapping("{actionId}")
-    public WashAction getActionById(@PathVariable String actionId){
+    public WashAction getActionById(@PathVariable Long actionId){
         return actionService.getWashAction(actionId);
     }
 
@@ -62,7 +62,7 @@ public class WashActionRestController {
      * @return
      */
     @GetMapping("machine/{machineId}")
-    public List<WashAction> getActionsByMachineId(@PathVariable String machineId){
+    public List<WashAction> getActionsByMachineId(@PathVariable Long machineId){
         return actionService.getWashActionByMachineId(machineId);
     }
 

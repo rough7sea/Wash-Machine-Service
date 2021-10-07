@@ -8,6 +8,7 @@ import com.example.washmachine.common.WashStep;
 import com.example.washmachine.api.dto.WashEventDto;
 import com.example.washmachine.common.exception.ExceptionId;
 import com.example.washmachine.common.exception.ServiceException;
+import com.google.common.primitives.Longs;
 import org.apache.commons.lang3.StringUtils;
 
 public class Validator {
@@ -19,14 +20,14 @@ public class Validator {
         }
     }
 
-    public static void validateMachineId(String machineId) {
-        if (StringUtils.isBlank(machineId)){
+    public static void validateMachineId(Long machineId) {
+        if (machineId == null){
             throw new ServiceException(ExceptionId.INVALID_MACHINE_ID_EX, "Invalid machine id");
         }
     }
 
-    public static void validateActionId(String actionId) {
-        if (StringUtils.isBlank(actionId)){
+    public static void validateActionId(Long actionId) {
+        if (actionId == null){
             throw new ServiceException(ExceptionId.INVALID_ACTION_ID_EX, "Invalid action id");
         }
     }

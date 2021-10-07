@@ -49,22 +49,22 @@ public class WashMachineRestController {
     /**
      * Get current information about wash machine.
      *
-     * @param id
+     * @param machineId
      * @return
      */
-    @GetMapping("{id}")
-    public WashMachine getWashMachine(@PathVariable String id){
-        return washMachineService.getWashMachine(id);
+    @GetMapping("{machineId}")
+    public WashMachine getWashMachine(@PathVariable Long machineId){
+        return washMachineService.getWashMachine(machineId);
     }
 
     /**
      * Delete wash machine. Actions and events deleted cascade.
      *
-     * @param id
+     * @param machineId
      * @return
      */
-    @DeleteMapping("{id}")
-    public Boolean deleteWashMachine(@PathVariable String id){
-        return washMachineService.deleteWashMachine(id);
+    @DeleteMapping("{machineId}")
+    public Boolean deleteWashMachine(@PathVariable Long machineId){
+        return washMachineService.deleteWashMachine(machineId);
     }
 }

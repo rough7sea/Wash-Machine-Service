@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WashEventDto {
-    private String actionId;
+    private Long actionId;
     private String step;
 }

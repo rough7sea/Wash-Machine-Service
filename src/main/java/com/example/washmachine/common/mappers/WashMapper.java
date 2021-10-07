@@ -16,10 +16,10 @@ public interface WashMapper {
 
     WashMapper INSTANCE = Mappers.getMapper(WashMapper.class);
 
-    @Mapping(target = "id", defaultExpression = "java(java.util.UUID.randomUUID().toString())")
+//    @Mapping(target = "machineId")
     WashMachine toWashMachine(WashMachineDto washMachineDto);
 
-    @Mapping(target = "actionId", defaultExpression = "java(java.util.UUID.randomUUID().toString())")
+//    @Mapping(target = "actionId")
     WashAction toWashAction(WashActionDto dto);
 
     WashEvent toWashEvent(WashEventDto dto);

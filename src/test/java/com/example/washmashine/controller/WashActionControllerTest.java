@@ -3,12 +3,11 @@ package com.example.washmashine.controller;
 import com.example.washmachine.api.dto.WashActionDto;
 import com.example.washmachine.common.WashActionStatus;
 import com.example.washmachine.common.WashMode;
-import com.example.washmachine.controller.WashActionRestController;
 import com.example.washmachine.entity.WashAction;
 import com.example.washmachine.entity.WashParams;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MvcResult;
@@ -19,16 +18,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Sql(value = {"/wash-action-before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(value = {"/wash-after.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+//@Sql(value = {"/wash-before.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public class WashActionControllerTest extends AbstractTest{
 
-    @Autowired
-    private WashActionRestController washActionRestController;
-
-    private static final String activeMachineUUID = "8a54fdd5-7f01-4ccd-a163-56af89e919a4";
-    private static final String inactiveMachineUUID = "284aff4d-f4c3-42e3-bcaf-bc30fee4f1bf";
+    private static final Long activeMachineUUID = 2L;
+    private static final Long inactiveMachineUUID = 1L;
 
     @Test
+    @Order(1)
     void actionFullInsert() throws Exception {
         // create action
         WashParams washParams = WashParams.builder()
@@ -57,7 +54,7 @@ public class WashActionControllerTest extends AbstractTest{
         Assertions.assertEquals(activeMachineUUID, action.getMachineId());
         Assertions.assertEquals(WashActionStatus.PROCESS, action.getStatus());
         Assertions.assertEquals(WashMode.BABY, action.getWashMode());
-        Assertions.assertNotNull(action.getStartDate());
+        Assertions.assertNotNull(action.getCreateDate());
         Assertions.assertNull(action.getUpdateDate());
 
         //check params
@@ -73,6 +70,7 @@ public class WashActionControllerTest extends AbstractTest{
     }
 
     @Test
+    @Order(2)
     void actionUpsert() throws Exception {
         // create action
         WashActionDto actionDto = WashActionDto.builder()
@@ -92,7 +90,7 @@ public class WashActionControllerTest extends AbstractTest{
         Assertions.assertEquals(WashActionStatus.PROCESS, action.getStatus());
         Assertions.assertEquals(WashMode.BABY, action.getWashMode());
         Assertions.assertNull(action.getCustomParams());
-        Assertions.assertNotNull(action.getStartDate());
+        Assertions.assertNotNull(action.getCreateDate());
         Assertions.assertNull(action.getUpdateDate());
 
 
@@ -111,9 +109,9 @@ public class WashActionControllerTest extends AbstractTest{
         Assertions.assertEquals(WashActionStatus.PAUSED, action.getStatus());
         Assertions.assertEquals(WashMode.WOOL, action.getWashMode());
         Assertions.assertNull(action.getCustomParams());
-        Assertions.assertNotNull(action.getStartDate());
+        Assertions.assertNotNull(action.getCreateDate());
         Assertions.assertNotNull(action.getUpdateDate());
-        Assertions.assertTrue(action.getStartDate().before(action.getUpdateDate()));
+        Assertions.assertTrue(action.getCreateDate().before(action.getUpdateDate()));
 
 
         result = mockMvc.perform(get(WASH_ACTON_BASE_PATH))
@@ -134,6 +132,7 @@ public class WashActionControllerTest extends AbstractTest{
     }
 
     @Test
+    @Order(3)
     void actionFailUpsert() throws Exception {
         //exception create action
         WashActionDto actionDto = WashActionDto.builder()
@@ -166,6 +165,7 @@ public class WashActionControllerTest extends AbstractTest{
     }
 
     @Test
+    @Order(4)
     void actionGet() throws Exception {
         // create action
         WashActionDto actionDto = WashActionDto.builder()
@@ -193,7 +193,7 @@ public class WashActionControllerTest extends AbstractTest{
         Assertions.assertEquals(WashActionStatus.PROCESS, action.getStatus());
         Assertions.assertEquals(WashMode.BABY, action.getWashMode());
         Assertions.assertNull(action.getCustomParams());
-        Assertions.assertNotNull(action.getStartDate());
+        Assertions.assertNotNull(action.getCreateDate());
         Assertions.assertNull(action.getUpdateDate());
 
 
@@ -210,7 +210,7 @@ public class WashActionControllerTest extends AbstractTest{
         Assertions.assertEquals(WashActionStatus.PROCESS, action.getStatus());
         Assertions.assertEquals(WashMode.BABY, action.getWashMode());
         Assertions.assertNull(action.getCustomParams());
-        Assertions.assertNotNull(action.getStartDate());
+        Assertions.assertNotNull(action.getCreateDate());
         Assertions.assertNull(action.getUpdateDate());
     }
 }
